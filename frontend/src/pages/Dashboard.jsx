@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
@@ -13,6 +13,7 @@ const Dashboard = () => {
   const { userBookings, loading: bookingsLoading, error, fetchUserBookings } = useBookings();
   const [currentDate] = useState(new Date());
   const [timeSlots] = useState(generateTimeSlots());
+  const [roomBookings, setRoomBookings] = useState({});
   
   // Generate time slots from 9 AM to 6 PM
   function generateTimeSlots() {
@@ -24,11 +25,47 @@ const Dashboard = () => {
     return slots;
   }
   
+  // Fetch bookings for all rooms
+  const fetchAllRoomBookings = useCallback(async () => {
+    if (!rooms.length) return;
+    
+    const date = format(currentDate, 'yyyy-MM-dd');
+    const bookingsMap = {};
+    
+    for (const room of rooms) {
+      try {
+        const bookings = await fetchRoomBookings(room._id, date);
+        bookingsMap[room._id] = bookings;
+      } catch (err) {
+        console.error(`Error fetching bookings for room ${room._id}:`, err);
+      }
+    }
+    
+    setRoomBookings(bookingsMap);
+  }, [rooms, fetchRoomBookings, currentDate]);
+  
   useEffect(() => {
     if (user) {
       fetchUserBookings(user._id);
     }
-  }, [user, fetchUserBookings]);
+    
+    fetchAllRoomBookings();
+  }, [user, fetchUserBookings, fetchAllRoomBookings]);
+  
+  // Check if a timeslot is booked for a specific room
+  const isTimeSlotBooked = (roomId, hour) => {
+    const bookings = roomBookings[roomId];
+    if (!bookings || !bookings.length) return false;
+    
+    const hourTime = new Date(currentDate);
+    hourTime.setHours(hour, 0, 0, 0);
+    
+    return bookings.some(booking => {
+      const startTime = new Date(booking.startTime);
+      const endTime = new Date(booking.endTime);
+      return hourTime >= startTime && hourTime < endTime;
+    });
+  };
   
   if (roomsLoading || bookingsLoading) {
     return (
@@ -120,14 +157,21 @@ const Dashboard = () => {
                   className="grid grid-cols-[200px_repeat(10,100px)] border-b py-2"
                 >
                   <div className="px-4 font-medium flex items-center">{room.name}</div>
-                  {timeSlots.map(slot => (
-                    <div 
-                      key={slot.hour} 
-                      className="flex justify-center items-center"
-                    >
-                      <div className="w-full h-6 bg-green-100 mx-1 rounded"></div>
-                    </div>
-                  ))}
+                  {timeSlots.map(slot => {
+                    const isBooked = isTimeSlotBooked(room._id, slot.hour);
+                    return (
+                      <div 
+                        key={slot.hour} 
+                        className="flex justify-center items-center"
+                      >
+                        <div 
+                          className={`w-full h-6 ${isBooked ? 'bg-red-100' : 'bg-green-100'} mx-1 rounded flex items-center justify-center text-xs font-medium`}
+                        >
+                          {isBooked ? 'Booked' : 'Available'}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
