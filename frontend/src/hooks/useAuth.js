@@ -8,14 +8,25 @@ export const useAuth = () => {
 
   // Check if user is logged in on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
+    const checkAuth = async () => {
+      setLoading(true);
+      try {
+        const storedUser = localStorage.getItem('user');
+        const token = localStorage.getItem('token');
+        
+        if (storedUser && token) {
+          // Add a small delay to prevent flash
+          await new Promise(resolve => setTimeout(resolve, 300));
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    }
-    
-    setLoading(false);
+    checkAuth();
   }, []);
 
   const login = async (name, email) => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { roomApi } from '../api/roomApi';
 
 export const useRooms = () => {
@@ -14,7 +14,9 @@ export const useRooms = () => {
       const data = await roomApi.getAllRooms();
       setRooms(data);
     } catch (err) {
+      console.error('Error fetching rooms:', err);
       setError(err.response?.data?.message || 'Failed to fetch rooms');
+      // Don't throw here - handle gracefully
     } finally {
       setLoading(false);
     }
@@ -24,7 +26,7 @@ export const useRooms = () => {
     fetchRooms();
   }, []);
 
-  const getRoomById = async (roomId) => {
+  const getRoomById = useCallback(async (roomId) => {
     try {
       setLoading(true);
       setError(null);
@@ -37,7 +39,7 @@ export const useRooms = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const getRoomAvailability = async (roomId, date) => {
     try {

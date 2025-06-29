@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { bookingApi } from '../api/bookingApi';
 
 export const useBookings = () => {
@@ -6,7 +6,7 @@ export const useBookings = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchUserBookings = async (userId) => {
+  const fetchUserBookings = useCallback(async (userId) => {
     try {
       setLoading(true);
       setError(null);
@@ -20,9 +20,9 @@ export const useBookings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchRoomBookings = async (roomId, date) => {
+  const fetchRoomBookings = useCallback(async (roomId, date) => {
     try {
       setLoading(true);
       setError(null);
@@ -35,8 +35,8 @@ export const useBookings = () => {
     } finally {
       setLoading(false);
     }
-  };
-
+  }, []);
+  
   const createBooking = async (bookingData) => {
     try {
       setLoading(true);
