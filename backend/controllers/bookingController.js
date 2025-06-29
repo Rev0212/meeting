@@ -74,7 +74,7 @@ exports.getAllBookingsForDate = async (req, res) => {
 // Cancel a booking
 exports.cancelBooking = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { bookingId } = req.params;
     const { userId } = req.body;
     
     if (!userId) {

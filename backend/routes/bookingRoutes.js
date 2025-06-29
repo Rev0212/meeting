@@ -16,6 +16,6 @@ router.get('/room/:roomId', protect, bookingController.getRoomBookings);
 router.get('/', protect, bookingController.getAllBookingsForDate);
 
 // Cancel a booking
-router.put('/cancel/:id', protect, bookingController.cancelBooking);
+router.delete('/cancel/:id', protect, bookingController.cancelBooking);
 
 module.exports = router;

@@ -11,7 +11,7 @@ import Layout from '../components/Layout';
 const BookingForm = () => {
   const { user } = useAuthContext();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();x
   const preselectedRoomId = searchParams.get('roomId');
   
   const { rooms, loading: roomsLoading } = useRooms();

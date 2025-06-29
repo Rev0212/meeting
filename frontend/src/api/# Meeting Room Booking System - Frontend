@@ -1,0 +1,37 @@
+# Meeting Room Booking System - Frontend
+
+A modern web application for booking and managing meeting rooms with an intuitive UI and real-time availability tracking.
+
+## Features
+
+- **User Authentication**: Simple login with name and email
+- **Dashboard**: Visual timeline of room availability for the current day
+- **Room Management**: Browse and search available meeting rooms
+- **Room Details**: View room capacity, equipment, and availability
+- **Booking System**: Book rooms with time slot selection
+- **My Bookings**: Manage your current and past bookings
+- **Responsive Design**: Works on desktop and mobile devices
+
+## Tech Stack
+
+- **React**: UI library
+- **Vite**: Build tool
+- **React Router**: Navigation
+- **Axios**: API requests
+- **Framer Motion**: Animations
+- **React Hot Toast**: Notifications
+- **Tailwind CSS**: Styling
+- **date-fns**: Date manipulation
+
+## Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+- Backend API running (see backend README)
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/meeting-room.git
+   cd meeting-room/frontend
